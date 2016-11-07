@@ -1,4 +1,6 @@
-#coding=utf-8
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import json
 
 from django import forms
@@ -16,7 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.templatetags import feincms_thumbnail
 
-from models import Gallery, GalleryMediaFile
+from .models import Gallery, GalleryMediaFile
 
 
 class MediaFileWidget(forms.TextInput):

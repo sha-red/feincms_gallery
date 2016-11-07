@@ -1,4 +1,6 @@
-#coding=utf-8
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -60,9 +62,9 @@ class GalleryContent(models.Model):
     @classmethod
     def initialize_type(cls, types=DEFAULT_SPECS, **kwargs):
         if 'feincms.module.medialibrary' not in settings.INSTALLED_APPS:
-            raise ImproperlyConfigured, 'You have to add \'feincms.module.'\
-                'medialibrary\' to your INSTALLED_APPS before creating a %s' \
-                % cls.__name__
+            raise (ImproperlyConfigured,
+                'You have to add \'feincms.module.medialibrary\' to your '
+                'INSTALLED_APPS before creating a %s' % cls.__name__)
 
         cls.specs = dict([ ('%s_%s' % (spec.name, types.index(spec)), spec)
                                        for spec in types ])
