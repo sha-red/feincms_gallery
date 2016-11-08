@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django import forms
+from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
@@ -9,6 +10,7 @@ from django.db import models
 from django.http import HttpResponse
 from django.template.context import RequestContext
 from django.template.loader import render_to_string
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 
 from feincms.module.medialibrary.models import MediaFile
@@ -17,13 +19,22 @@ from .specs.legacy import DEFAULT_SPECS
 
 __all__ = ['Gallery', 'GalleryMediaFile', 'GalleryContent', 'DEFAULT_SPECS']
 
+
+@python_2_unicode_compatible
 class Gallery(models.Model):
     title = models.CharField(max_length=30)
     images = models.ManyToManyField(MediaFile, through='GalleryMediaFile')
     
+    class Meta:
+        verbose_name = _('Gallery')
+        verbose_name_plural = _('Galleries')
+
+    def __str__(self):
+        return self.title
+
     def ordered_images(self):
-        return self.images.select_related().all()\
-                                        .order_by('gallerymediafile__ordering')
+        return self.images.select_related().all() \
+            .order_by('gallerymediafile__ordering')
     
     def count_images(self):
         if not getattr(self, '_image_count', None):
@@ -33,17 +44,11 @@ class Gallery(models.Model):
     def verbose_images(self):
         count = self.count_images()
         return ungettext_lazy('%(count)d Image',
-                              '%(count)d Images', count) % {'count': count }
+                              '%(count)d Images', count) % {'count': count}
     verbose_images.short_description = _('Image Count')
     
-    class Meta:
-        verbose_name = _('Gallery')
-        verbose_name_plural = _('Galleries')
-    
-    def __unicode__(self):
-        return self.title
-    
 
+@python_2_unicode_compatible
 class GalleryMediaFile(models.Model):
     gallery = models.ForeignKey(Gallery)
     mediafile = models.ForeignKey(MediaFile)
@@ -54,23 +59,22 @@ class GalleryMediaFile(models.Model):
         verbose_name_plural = 'Images for Gallery'
         ordering = ['ordering']
         
-    def __unicode__(self):
-        return u'%s' %self.mediafile
+    def __str__(self):
+        return "%s" % self.mediafile
 
 
 class GalleryContent(models.Model):
     @classmethod
     def initialize_type(cls, types=DEFAULT_SPECS, **kwargs):
-        if 'feincms.module.medialibrary' not in settings.INSTALLED_APPS:
+        if not apps.get_containing_app_config('feincms.module.medialibrary'):
             raise (ImproperlyConfigured,
                 'You have to add \'feincms.module.medialibrary\' to your '
                 'INSTALLED_APPS before creating a %s' % cls.__name__)
 
-        cls.specs = dict([ ('%s_%s' % (spec.name, types.index(spec)), spec)
-                                       for spec in types ])
-        cls.spec_choices = [ (spec, cls.specs[spec].verbose_name )
-                                       for spec in cls.specs ]
-
+        cls.specs = dict([('%s_%s' % (spec.name, types.index(spec)), spec)
+                          for spec in types])
+        cls.spec_choices = [(spec, cls.specs[spec].verbose_name)
+                            for spec in cls.specs]
         cls.add_to_class('type', models.CharField(max_length=20,
                                  choices=cls.spec_choices,
                                  default=cls.spec_choices[0][0]))
@@ -129,8 +133,11 @@ class GalleryContent(models.Model):
             current_page, paginator = None, None
             images = objects
 
-        return render_to_string(self.spec.templates,
-                {'content': self, 'block':current_page,
-                'images': images, 'paginator': paginator,
-                'remaining': remaining, 'request': request },
-            context_instance = RequestContext(request))
+        return render_to_string(self.spec.templates, {
+            'content': self,
+            'block': current_page,
+            'images': images,
+            'paginator': paginator,
+            'remaining': remaining,
+            'request': request},
+            context_instance=RequestContext(request))
