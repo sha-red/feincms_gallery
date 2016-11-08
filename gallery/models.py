@@ -22,12 +22,15 @@ __all__ = ['Gallery', 'GalleryMediaFile', 'GalleryContent', 'DEFAULT_SPECS']
 
 @python_2_unicode_compatible
 class Gallery(models.Model):
-    title = models.CharField(max_length=30)
-    images = models.ManyToManyField(MediaFile, through='GalleryMediaFile')
+    title = models.CharField(_("Title"), max_length=500)
+    title_en = models.CharField(_("Title (english"), max_length=500, null=True, blank=True)
+    description_de = models.TextField(_("Description"), null=True, blank=True)
+    description_en = models.TextField(_("Description (english"), null=True, blank=True)
+    images = models.ManyToManyField(MediaFile, verbose_name=_("Gallery Images"), through='GalleryMediaFile')  # TODO Restrict to type='image'?
     
     class Meta:
-        verbose_name = _('Gallery')
-        verbose_name_plural = _('Galleries')
+        verbose_name = _("Gallery")
+        verbose_name_plural = _("Galleries")
 
     def __str__(self):
         return self.title
@@ -45,7 +48,7 @@ class Gallery(models.Model):
         count = self.count_images()
         return ungettext_lazy('%(count)d Image',
                               '%(count)d Images', count) % {'count': count}
-    verbose_images.short_description = _('Image Count')
+    verbose_images.short_description = _("Image Count")
     
 
 @python_2_unicode_compatible
@@ -83,6 +86,11 @@ class GalleryContent(models.Model):
         help_text=_('Choose a gallery to render here'),
         related_name='%(app_label)s_%(class)s_gallery')
 
+    class Meta:
+        abstract = True
+        verbose_name = _('Image Gallery')
+        verbose_name_plural = _('Image Galleries')
+
     @property
     def spec(self):
         try:
@@ -97,11 +105,6 @@ class GalleryContent(models.Model):
     def has_pagination(self):
         return self.spec.paginated
         
-    class Meta:
-        abstract = True
-        verbose_name = _('Image Gallery')
-        verbose_name_plural = _('Image Galleries')
-
     def process(self, request, **kwargs):
         if int(request.GET.get('gallery', 0)) == self.id and request.is_ajax():
             return HttpResponse(self.render(request, **kwargs))

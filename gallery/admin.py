@@ -102,6 +102,7 @@ admin_thumbnail.allow_tags = True
 class MediaFileAdminForm(forms.ModelForm):
     mediafile = forms.ModelChoiceField(queryset=MediaFile.objects.filter(type='image'),
                                 widget=MediaFileWidget(attrs={'class': 'image-fk'}), label=_('media file'))
+
     class Meta:
         model = GalleryMediaFile
         fields = ('gallery', 'mediafile', 'ordering')
@@ -127,6 +128,10 @@ class GalleryMediaFileInline(admin.StackedInline):
 class GalleryAdmin(admin.ModelAdmin):
     inlines = (GalleryMediaFileInline,)
     list_display = ['title', 'verbose_images']
+    fields = (
+        ('title', 'title_en'),
+        ('description_de', 'description_en'),
+    )
 
     class AddCategoryForm(forms.Form):
         _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
