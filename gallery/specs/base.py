@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 
 class BaseSpec(object):
     def __init__(self, **kwargs):
@@ -12,7 +15,7 @@ class BaseSpec(object):
     def templates(self):
         templates = [
             '%s%s.html' % (self.template_path, self.__class__.__name__.lower()),
-            self.default_template ]
+            self.default_template]
 
         if hasattr(self, 'template_name'):
             templates.insert(0, '%s%s' % (self.template_path, self.template_name))
@@ -21,6 +24,7 @@ class BaseSpec(object):
     @property
     def name(self):
         return self.__class__.__name__
+
 
 class Type(BaseSpec):
     pass

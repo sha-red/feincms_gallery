@@ -1,9 +1,13 @@
-""" Dowload fancybox from:
-    http://fancybox.googlecode.com/files/jquery.fancybox-1.3.4.zip
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+"""
+Dowload fancybox from:
+http://fancybox.googlecode.com/files/jquery.fancybox-1.3.4.zip
 """
 
 from django.utils.translation import ugettext_lazy as _
 from .base import BaseSpec
+
 
 class ClassicLightbox(BaseSpec):
     verbose_name = _('Classic Gallery with Lightbox (paginated).')
@@ -21,7 +25,11 @@ class ClassicLightbox(BaseSpec):
                'content/gallery/gallery.js'),
     }
 
-DEFAULT_SPECS = (ClassicLightbox(),)
+
+DEFAULT_SPECS = (
+    ClassicLightbox(),
+)
+
 
 #TODO: write classes for all predefined gallery types:
 #
