@@ -3,6 +3,7 @@
 		{% if images %}
 			<div id="gallery{{ content.pk }}" class="image-gallery"
 					 data-featherlight-gallery
+					 data-featherlight-variant="black"
 					 data-featherlight-filter="nav a.thumb">
 			{% for image in images %}
 				<figure id="slide{{ image.pk }}">
