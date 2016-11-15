@@ -31,36 +31,37 @@
 
 {% endcomment %}
 
-
 		{% if images %}
-
-			<section class="image-gallery">
-			{% comment %}
-				<div id="gallery-{{ content.gallery.pk }}" class="gallery-items">
-					{% for i in images %}
-						{% if i.type == 'image' %}
-						<figure id="slide{{ forloop.counter }}">
-							<img src="{{ i.file.url }}" alt="{# TODO Add description, coypright, author #}">{# TODO img.get_alt_text implementieren#}
-
-							<figcaption>
-								{{ i|translate:"caption"|inline_markdown }}
-							</figcaption>
-						</figure>
-						{% endif %}
-					{% endfor %}
-				</div>
-			{% endcomment %}
-
-				{% if images %}
-				<nav id="nav-gallery-{{ content.gallery.pk }}">
-					<div class="pager">
-					{% for i in images %}
-						<a href="#"><img src="{{ i.file.name|thumbnail:"128x128" }}"></a>
-					{% endfor %}
+			<div id="gallery{{ content.pk }}" class="image-gallery">
+			{% for image in images %}
+				<figure id="slide{{ image.pk }}">
+					<div class="photoframe">
+						<img src="{{ image.file.url }}">
 					</div>
+					<figcaption>
+						{{ image.get_translation.caption|inline_markdown }}
+						{# TODO Show image description #}
+						{% if image.copyright %}
+						<span class="copyright">{{ image.copyright|inline_markdown }}</span>
+						{% endif %}
+					</figcaption>
+				</figure>
+			{% endfor %}
+
+				<nav>
+					{% for image in images %}
+						<a class="thumb" href="#slide{{ image.pk }}"><img src="{{ image.file.name|thumbnail:"160x160" }}"></a>
+					{% endfor %}
 				</nav>
+
+			{% with content|translate:"description" as description %}
+				{% if description %}
+				<div class="gallery-caption">
+					{{ content|translate:"description"|markdown }}
+				</div>
 				{% endif %}
-			</section>
+			{% endwith %}
+		</div>
 		{% endif %}
 
 

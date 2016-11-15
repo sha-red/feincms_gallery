@@ -1,0 +1,61 @@
+{% load feincms_thumbnail i18n markup_tags translation_tags %}
+
+		{% if images %}
+			<div id="gallery{{ content.pk }}" class="image-gallery"
+					 data-featherlight-gallery
+					 data-featherlight-filter="nav a.thumb">
+			{% for image in images %}
+				<figure id="slide{{ image.pk }}">
+					<div class="photoframe">
+						<img src="{{ image.file.url }}">
+					</div>
+
+					<figcaption>
+						{% if image.get_translation.description %}
+							<p class="caption">
+								{{ image.get_translation.caption|inline_markdown }}
+							</p>
+
+							{{ image.get_translation.description|markdown }}
+
+							{% if image.copyright %}
+							<p class="copyright">{{ image.copyright|inline_markdown }}</p>
+							{% endif %}
+						{% else %}
+							{{ image.get_translation.caption|inline_markdown }}
+							{% if image.copyright %}
+							<span class="copyright">{{ image.copyright|inline_markdown }}</span>
+							{% endif %}
+						{% endif %}
+					</figcaption>
+				</figure>
+			{% endfor %}
+
+				<nav class="thumbs">
+					{% for image in images %}
+						<a class="thumb" href="#slide{{ image.pk }}"><img src="{{ image.file.name|thumbnail:"160x160" }}"></a>
+					{% endfor %}
+				</nav>
+
+				<div class="gallery-caption">
+					{% if content.gallery|translate:"title" %}
+					<h3 class="gallery">{{ content.gallery|translate:"title"|inline_markdown }}</h3>
+					{% endif %}
+
+					{% if content.gallery|translate:"description" %}
+					<div class="description">
+						{{ content.gallery|translate:"description"|markdown }}
+					</div>
+					{% endif %}
+				</div>
+
+			{% with content|translate:"description" as description %}
+				{% if description %}
+				<div class="gallery-caption">
+					{{ content|translate:"description"|markdown }}
+				</div>
+				{% endif %}
+			{% endwith %}
+		</div>
+		{% endif %}
+
