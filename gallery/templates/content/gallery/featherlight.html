@@ -1,5 +1,6 @@
 {% load feincms_thumbnail i18n markup_tags translation_tags %}
 
+
 		{% if images %}
 			<div id="gallery{{ content.pk }}" class="image-gallery"
 					 data-featherlight-gallery
@@ -8,7 +9,7 @@
 			{% for image in images %}
 				<figure id="slide{{ image.pk }}">
 					<div class="photoframe">
-						<img src="{{ image.file.url }}">
+						<img src="{{ image.lightbox_image.url }}">
 					</div>
 
 					<figcaption>
@@ -19,13 +20,27 @@
 
 							{{ image.get_translation.description|markdown }}
 
-							{% if image.copyright %}
-							<p class="copyright">{{ image.copyright|inline_markdown }}</p>
+							{% if image.copyright or image.author %}
+							<p class="copyright">
+								{% if image.copyright %}
+									&copy;
+									{{ image.copyright|inline_markdown }}
+								{% endif %}
+								{% if image.author %}
+								<span class="author">{{ image.get_author_label_display }}: {{ image.author|inline_markdown }}</span>
+								{% endif %}
+							</p>
 							{% endif %}
+
 						{% else %}
 							{{ image.get_translation.caption|inline_markdown }}
+
 							{% if image.copyright %}
 							<span class="copyright">{{ image.copyright|inline_markdown }}</span>
+							{% endif %}
+
+							{% if image.author %}
+							<span class="author">{{ image.get_author_label_display }}: {{ image.author|inline_markdown }}</span>
 							{% endif %}
 						{% endif %}
 					</figcaption>
@@ -34,29 +49,26 @@
 
 				<nav class="thumbs">
 					{% for image in images %}
-						<a class="thumb" href="#slide{{ image.pk }}"><img src="{{ image.file.name|thumbnail:"160x160" }}"></a>
+						<a class="thumb" href="#slide{{ image.pk }}"><img src="{{ image.gallery_image_thumbnail.url }}"></a>
 					{% endfor %}
 				</nav>
 
-				<div class="gallery-caption">
-					{% if content.gallery|translate:"title" %}
-					<h3 class="gallery">{{ content.gallery|translate:"title"|inline_markdown }}</h3>
-					{% endif %}
+			{% if content.gallery %}
+				{% with title=content.gallery|translate:"title" description=content.gallery|translate:"description" %}
+					{% if title or description %}
+					<div class="gallery-caption">
+						{% if title %}
+						<h3 class="gallery">{{ title|inline_markdown }}</h3>
+						{% endif %}
 
-					{% if content.gallery|translate:"description" %}
-					<div class="description">
-						{{ content.gallery|translate:"description"|markdown }}
+						{% if description %}
+						<div class="description">
+							{{ description|markdown }}
+						</div>
+						{% endif %}
 					</div>
 					{% endif %}
-				</div>
-
-			{% with content|translate:"description" as description %}
-				{% if description %}
-				<div class="gallery-caption">
-					{{ content|translate:"description"|markdown }}
-				</div>
-				{% endif %}
-			{% endwith %}
+				{% endwith %}
+			{% endif %}
 		</div>
 		{% endif %}
-
