@@ -1,8 +1,13 @@
-#coding=utf-8
-from django import template
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import random
-register = template.Library()
+
+from django import template
 from django.db.models.query import QuerySet
+
+
+register = template.Library()
 
 
 @register.filter

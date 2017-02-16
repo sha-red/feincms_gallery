@@ -1,6 +1,8 @@
-from django.conf.urls import include, url
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-from gallery.admin import admin_thumbnail
+from django.conf.urls import url
+from .admin import admin_thumbnail
 
 
 urlpatterns = [
