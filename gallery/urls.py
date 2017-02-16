@@ -1,11 +1,10 @@
-try:
-    from django.conf.urls import patterns, url
-except ImportError:  # Older Django versions
-    from django.conf.urls.defaults import patterns, url
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-from gallery.admin import admin_thumbnail
+from django.conf.urls import url
+from .admin import admin_thumbnail
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^thumbnail/$', admin_thumbnail, name='gallery_admin_thumbnail'),
-)
+]
