@@ -162,7 +162,7 @@ class GalleryAdmin(admin.ModelAdmin):
             form = self.AddCategoryForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
         return render_to_response('admin/gallery/add_category.html', {'mediafiles': queryset,
                                                          'category_form': form,
-                                                        }, context_instance=RequestContext(request))
+                                                        }, request=request)
     assign_category.short_description = _('Assign Images from a Category to this Gallery')
     actions = [assign_category]
 

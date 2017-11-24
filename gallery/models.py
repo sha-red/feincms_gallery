@@ -142,5 +142,4 @@ class GalleryContent(models.Model):
             'images': images,
             'paginator': paginator,
             'remaining': remaining,
-            'request': request},
-            context_instance=RequestContext(request))
+            'request': request}, request=request)
