@@ -7,6 +7,7 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 
 from feincms.module.medialibrary.models import MediaFile
 
+from m1web.billboard.models import Color
 from .specs.legacy import DEFAULT_SPECS
 
 
@@ -20,6 +21,8 @@ class Gallery(models.Model):
     title_en = models.CharField(_("Title (english)"), max_length=500, null=True, blank=True)
     description_de = models.TextField(_("Description"), null=True, blank=True)
     description_en = models.TextField(_("Description (english"), null=True, blank=True)
+    background_color = models.ForeignKey(Color, verbose_name=_("Hintergrundfarbe"), null=True, blank=True,
+        help_text=_("Wird angezeigt, bevor das erste Bild geladen wird"))
     images = models.ManyToManyField(MediaFile, verbose_name=_("Gallery Images"), through='GalleryMediaFile')  # TODO Restrict to type='image'?
     
     class Meta:
