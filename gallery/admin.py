@@ -90,6 +90,7 @@ class GalleryAdmin(admin.ModelAdmin):
     fields = (
         ('title', 'title_en'),
         ('description_de', 'description_en'),
+        'background_color',
     )
     inlines = [GalleryMediaFileInline]
 
