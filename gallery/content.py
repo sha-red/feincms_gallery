@@ -95,4 +95,4 @@ class GalleryContent(models.Model):
             'paginator': paginator,
             'remaining': remaining,
             'request': request},
-            context_instance=RequestContext(request))
+            request=request)
