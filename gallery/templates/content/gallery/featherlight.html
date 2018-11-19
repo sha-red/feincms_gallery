@@ -1,4 +1,4 @@
-{% load feincms_thumbnail i18n markup_tags translation_tags %}
+{% load feincms_thumbnail i18n markup_tags text_tags %}
 
 		{% if images %}
 			<div id="gallery{{ content.pk }}" class="image-gallery"
@@ -8,24 +8,24 @@
 			{% for image in images %}
 				<figure id="slide{{ image.pk }}">
 					<div class="photoframe">
-						<img src="{{ image.file.url }}">
+						<img src="{{ image.fullsize_image.url }}">
 					</div>
 
 					<figcaption>
 						{% if image.get_translation.description %}
 							<p class="caption">
-								{{ image.get_translation.caption|inline_markdown }}
+								{{ image.get_translation.caption|slimdown }}
 							</p>
 
 							{{ image.get_translation.description|markdown }}
 
 							{% if image.copyright %}
-							<p class="copyright">{{ image.copyright|inline_markdown }}</p>
+							<p class="copyright">{{ image.copyright|slimdown }}</p>
 							{% endif %}
 						{% else %}
-							{{ image.get_translation.caption|inline_markdown }}
+							{{ image.get_translation.caption|slimdown }}
 							{% if image.copyright %}
-							<span class="copyright">{{ image.copyright|inline_markdown }}</span>
+							<span class="copyright">{{ image.copyright|slimdown }}</span>
 							{% endif %}
 						{% endif %}
 					</figcaption>
@@ -34,26 +34,26 @@
 
 				<nav class="thumbs">
 					{% for image in images %}
-						<a class="thumb" href="#slide{{ image.pk }}"><img src="{{ image.file.name|thumbnail:"160x160" }}"></a>
+						<a class="thumb" href="#slide{{ image.pk }}"><img src="{{ image.fullsize_image.name|thumbnail:"160x160" }}"></a>
 					{% endfor %}
 				</nav>
 
 				<div class="gallery-caption">
-					{% if content.gallery|translate:"title" %}
-					<h3 class="gallery">{{ content.gallery|translate:"title"|inline_markdown }}</h3>
+					{% if content.gallery.title %}
+					<h3 class="gallery">{{ content.gallery.title|slimdown }}</h3>
 					{% endif %}
 
-					{% if content.gallery|translate:"description" %}
+					{% if content.gallery.description %}
 					<div class="description">
-						{{ content.gallery|translate:"description"|markdown }}
+						{{ content.gallery.description|markdown }}
 					</div>
 					{% endif %}
 				</div>
 
-			{% with content|translate:"description" as description %}
+			{% with content.description as description %}
 				{% if description %}
 				<div class="gallery-caption">
-					{{ content|translate:"description"|markdown }}
+					{{ content.description|markdown }}
 				</div>
 				{% endif %}
 			{% endwith %}
