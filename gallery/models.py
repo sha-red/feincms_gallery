@@ -53,8 +53,8 @@ class Gallery(models.Model):
 
 @python_2_unicode_compatible
 class GalleryMediaFile(models.Model):
-    gallery = models.ForeignKey(Gallery)
-    mediafile = models.ForeignKey(MediaFile)
+    gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE)
+    mediafile = models.ForeignKey(MediaFile, on_delete=models.CASCADE)
     ordering = models.IntegerField(default=9999)
     
     class Meta:
