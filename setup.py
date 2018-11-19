@@ -1,30 +1,63 @@
 #!/usr/bin/env python
 
-import os
+from io import open
 from setuptools import setup, find_packages
+import os
+import re
+import subprocess
+
+
+"""
+Use `git tag 1.0.0` to tag a release; `python setup.py --version`
+to update the  _version.py file.
+"""
+
+
+def get_version(prefix):
+    if os.path.exists('.git'):
+        parts = subprocess.check_output(['git', 'describe', '--tags']).decode().strip().split('-')
+        if len(parts) == 3:
+            version = '{}.{}+{}'.format(*parts)
+        else:
+            version = parts[0]
+        version_py = "__version__ = '{}'".format(version)
+        _version = os.path.join(prefix, '_version.py')
+        if not os.path.exists(_version) or open(_version).read().strip() != version_py:
+            with open(_version, 'w') as fd:
+                fd.write(version_py)
+        return version
+    else:
+        for f in ('_version.py', '__init__.py'):
+            f = os.path.join(prefix, f)
+            if os.path.exists(f):
+                with open(f) as fd:
+                    metadata = dict(re.findall("__([a-z]+)__ = '([^']+)'", fd.read()))
+                if 'version' in metadata:
+                    break
+    return metadata['version']
+
+
+def read(filename):
+    path = os.path.join(os.path.dirname(__file__), filename)
+    with open(path, encoding='utf-8') as handle:
+        return handle.read()
+
 
 setup(
-	name = 'feincms-gallery',
-	packages = find_packages(),
-    include_package_data=True,
-    version=__import__('gallery').__version__,
+    name='feincms-gallery',
+    version=get_version('gallery'),
     description='A gallery for FeinCMS',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
+    long_description=read('README.rst'),
     author='Simon Baechler',
     author_email='dev@feinheit.ch',
-    url='https://github.com/feinheit/feincms_gallery',
+    url='https://github.com/sha-red/feincms_gallery',
     license='BSD License',
     platforms=['OS Independent'],
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Environment :: Web Environment',
-        'Framework :: Django',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-        'Topic :: Software Development',
-        'Topic :: Software Development :: Libraries :: Application Frameworks',
+    packages=find_packages(
+        exclude=['tests', 'testapp'],
+    ),
+    include_package_data=True,
+    install_requires=[
     ],
+    zip_safe=False,
 )
